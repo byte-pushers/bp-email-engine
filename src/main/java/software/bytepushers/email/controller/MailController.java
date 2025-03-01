@@ -17,9 +17,16 @@ import java.util.Date;
 public class MailController {
     @Autowired
     private SendMailService sendMailService;
-    @GetMapping("sendEmail")
 
-    private void Run() throws MessagingException{
+//    @GetMapping("sendEmail")
+//    public void run(String... args) throws Exception {
+//        sendMailService.sendEmail("bytepushers20@gmail.com", "Email from angusMail", "Hello World!! This is an test email using angusMail");
+//        System.out.println("Email sent successfully!");
+//    }
+
+    @GetMapping("sendEmail")
+    private void Run() throws MessagingException {
         sendMailService.sendHtlmEmail();
+        System.out.println("Sent successfully");
     }
 }
