@@ -30,11 +30,10 @@ public class SendMailService {
         mimeMessage.setFrom(new InternetAddress("bytepushers20@gmail.com"));
         mimeMessage.setRecipients(MimeMessage.RecipientType.TO, "bytepushers20@gmail.com");
         mimeMessage.setSubject("HTML test email");
-
         String html =
                 "<html><body>" +
                         "<h1>Hello John </h1> from html email!!!" +
-                        "</body>" +
+                "</body>" +
                         "</html>";
         mimeMessage.setContent(html, "text/html; charset=utf-8");
         javaMailSender.send(mimeMessage);
