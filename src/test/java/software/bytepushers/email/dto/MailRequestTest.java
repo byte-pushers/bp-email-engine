@@ -7,13 +7,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MailRequestTest {
     @Test
     void testMailRequestGettersAndSetters() {
-        MailRequest mailRequest = new MailRequest();
-        mailRequest.setTo("bytepushers20@gmail.com");
-        mailRequest.setSubject("Test Subject");
-        mailRequest.setBody("Test Body");
+        String expectedTo = "to@example.com";
+        String expectedSubject = "Subject";
+        String expectedBody = "Body";
 
-        assertEquals("bytepushers20@gmail.com", mailRequest.getTo());
-        assertEquals("Test Subject", mailRequest.getSubject());
-        assertEquals("Test Body", mailRequest.getBody());
+        String actualTo = "to@example.com";
+        String actualSubject = "Subject";
+        String actualBody = "Body";
+
+        MailRequest mailRequest = new MailRequest();
+        mailRequest.setTo(actualTo);
+        mailRequest.setSubject(actualSubject);
+        mailRequest.setBody(actualBody);
+
+        assertEquals(expectedTo, mailRequest.getTo());
+        assertEquals(expectedSubject, mailRequest.getSubject());
+        assertEquals(expectedBody, mailRequest.getBody());
     }
 }

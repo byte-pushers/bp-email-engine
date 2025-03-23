@@ -71,4 +71,12 @@ class MailControllerTest {
 
         verify(sendMailService, times(1)).sendEmail(anyString(), anyString(), anyString());
     }
+
+    @Test
+    void testSendHtmlEmail() throws Exception {
+        doNothing().when(sendMailService).sendHtlmEmail();
+
+        mockMvc.perform(post("/email/htmlEmail")).andExpect(status().isOk());
+        verify(sendMailService, times(1)).sendHtlmEmail();
+    }
 }
