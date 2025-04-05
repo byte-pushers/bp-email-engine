@@ -25,12 +25,9 @@ public class SendMailService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    private static final String HTML_TEMPLATE =
-            "<html> <body>" +
-                    "<h1>Hello {{name}}, </h1>" +
-                    "<p>This is a HTML templet email </p>" +
-                    "</body></html>";
+    private static final String HTML_TEMPLATE = "";  //TODO: read html from html file.
 
+    // TODO: REMOVE METHOD
     public void sendEmail(String to, String subject, String body) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
@@ -41,6 +38,7 @@ public class SendMailService {
         javaMailSender.send(mimeMessage);
     }
 
+    // TODO: REMOVE METHOD
     public void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
@@ -51,6 +49,7 @@ public class SendMailService {
         javaMailSender.send(mimeMessage);
     }
 
+    // TODO: REMOVE METHOD
     public void sendHtlmEmail() throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         mimeMessage.setFrom(new InternetAddress("bytepushers20@gmail.com"));
@@ -65,6 +64,7 @@ public class SendMailService {
         javaMailSender.send(mimeMessage);
     }
 
+    // TODO: PUT ALL EXCEL LOGIC INTO EXCEL SERVICE/UTILITY CLASS
     public void sendEmailFromExcel(MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
         Workbook workbook = new XSSFWorkbook(inputStream);
@@ -85,5 +85,17 @@ public class SendMailService {
             sendHtmlEmail(email, "Personalied Email", personalizedHtml);
         }
         workbook.close();
+    }
+
+
+    public void sendEmail(String emailSender, String emailRecipient, String emailSubject, String emailBody, Boolean htmlBody) throws MessagingException {
+        // TODO: Only put email logic here.  This method is only responsible for one thing - sending email.
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, htmlBody);
+        helper.setTo(emailRecipient);
+        helper.setSubject(emailSubject);
+        helper.setText(emailBody, htmlBody);
+        helper.setFrom(emailSender);
+        javaMailSender.send(mimeMessage);
     }
 }

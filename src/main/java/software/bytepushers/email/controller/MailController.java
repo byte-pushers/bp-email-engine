@@ -45,4 +45,10 @@ public class MailController {
             return "email not sent" + e.getMessage();
         }
     }
+
+    @PostMapping("/send")
+    public String send(@RequestParam("file") MultipartFile file, @RequestBody String campaignName) throws MessagingException {
+        //TODO: inject EmailCampaignService either in constructor or as class attribute.
+        EmailCampaignService.start(file, campaignName);
+    }
 }
