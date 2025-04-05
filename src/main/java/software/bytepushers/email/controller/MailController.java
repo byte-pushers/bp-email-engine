@@ -8,6 +8,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import software.bytepushers.email.dto.MailRequest;
 import software.bytepushers.email.service.SendMailService;
 
@@ -33,5 +34,15 @@ public class MailController {
     private void Run() throws MessagingException {
         sendMailService.sendHtlmEmail();
         System.out.println("Sent successfully");
+    }
+
+    @PostMapping("/uploadExcel")
+    public String uploadExcel(@RequestParam("file") MultipartFile file) throws MessagingException {
+        try{
+            sendMailService.sendEmailFromExcel(file);
+            return "Email sent successfully";
+        }catch (Exception e){
+            return "email not sent" + e.getMessage();
+        }
     }
 }

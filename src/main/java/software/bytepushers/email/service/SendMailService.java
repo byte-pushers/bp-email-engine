@@ -3,17 +3,33 @@ package software.bytepushers.email.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 @Service
 public class SendMailService {
 
     @Autowired
     private JavaMailSender javaMailSender;
+
+    private static final String HTML_TEMPLATE =
+            "<html> <body>" +
+                    "<h1>Hello {{name}}, </h1>" +
+                    "<p>This is a HTML templet email </p>" +
+                    "</body></html>";
 
     public void sendEmail(String to, String subject, String body) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -22,6 +38,16 @@ public class SendMailService {
         message.setSubject(subject);
         message.setText(body);
         message.setFrom("bytepushers20@gmail.com");
+        javaMailSender.send(mimeMessage);
+    }
+
+    public void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(htmlContent, true);
+        helper.setFrom("bytepushers20@gmail.com");
         javaMailSender.send(mimeMessage);
     }
 
@@ -37,5 +63,27 @@ public class SendMailService {
                         "</html>";
         mimeMessage.setContent(html, "text/html; charset=utf-8");
         javaMailSender.send(mimeMessage);
+    }
+
+    public void sendEmailFromExcel(MultipartFile file) throws Exception {
+        InputStream inputStream = file.getInputStream();
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+        Iterator<Row> rowIterator = sheet.iterator();
+        
+        if(rowIterator.hasNext()) rowIterator.next();
+        
+        while(rowIterator.hasNext()){
+            Row row = rowIterator.next();
+            String name = row.getCell(0).getStringCellValue();
+            String email = row.getCell(1).getStringCellValue();
+            
+            String personalizedHtml = HTML_TEMPLATE
+                    .replace("{{name}}", name)
+                    .replace("{{email}}", email);
+
+            sendHtmlEmail(email, "Personalied Email", personalizedHtml);
+        }
+        workbook.close();
     }
 }
