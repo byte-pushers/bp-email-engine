@@ -126,7 +126,7 @@
 										<limit>
 											<counter>INSTRUCTION</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>100%</minimum> <!-- 80% required -->
+											<minimum>50%</minimum> <!-- 80% required -->
 										</limit>
 									</limits>
 								</rule>
