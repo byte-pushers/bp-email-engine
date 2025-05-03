@@ -42,32 +42,36 @@ public class SendMailServiceIntegrationTest {
     @Test
     void varifyEmailWasSent() throws MessagingException {
 
-        String expectedTo = "bytepushers20@gmail.com";
-        String expectedSubject = "Test Subject";
-        String expectedBody = "Test Body";
+        String expectedEmailRecipient = "bytepushers20@gmail.com";
+        String expectedEmailSubject = "Test Subject";
+        String expectedEmailBody = "Test Body";
+        Boolean expectedHtmlBody = Boolean.valueOf("This is unit testing for service layer");
 
-        String actualTo = "bytepushers20@gmail.com";
-        String actualFrom = "bytepushers20@gmail.com";
-        String actualSubject = "Test Subject";
-        String actualBody = "Test Body";
+        String actualEmailRecipient = "bytepushers20@gmail.com";
+        //String actualFrom = "bytepushers20@gmail.com";
+        String actualEmailSubject = "Test Subject";
+        String actualEmailBody = "Test Body";
+        Boolean actualHtmlBody = Boolean.valueOf("This is unit testing for service layer");
 
-        sendMailService.sendEmail(expectedTo, expectedSubject, expectedBody);
+
+        sendMailService.sendEmail(expectedEmailRecipient, expectedEmailSubject, expectedEmailBody, expectedHtmlBody);
 
         verify(javaMailSender, times(1)).send(mimeMessage);
 
-        assertEquals(expectedTo, actualTo);
-        assertEquals(expectedSubject, actualSubject);
-        assertEquals(expectedBody, actualBody);
+        assertEquals(expectedEmailRecipient, actualEmailRecipient);
+        assertEquals(expectedEmailSubject, actualEmailSubject);
+        assertEquals(expectedEmailBody, actualEmailBody);
+        assertEquals(expectedHtmlBody, actualHtmlBody);
     }
 
     @Test
-    void testSendHtmlEmail() throws MessagingException {
+    void testSendEmail() throws MessagingException {
         String expectedTo = "bytepushers20@gmail.com";
         String expectedFrom = "bytepushers20@gmail.com";
         String expectedHtmlSubject = "HTML test email";
         String expectedHtmlBody = "<html><body><h1>Hello John </h1> from html email!!!</body></html>";
 
-        sendMailService.sendHtlmEmail();
+        sendMailService.sendEmail();
 
         verify(javaMailSender, times(1)).send(mimeMessage);
 
@@ -75,6 +79,5 @@ public class SendMailServiceIntegrationTest {
         verify(mimeMessage).setRecipients(MimeMessage.RecipientType.TO, expectedTo);
         verify(mimeMessage).setSubject(expectedHtmlSubject);
         verify(mimeMessage).setContent(expectedHtmlBody, "text/html; charset=utf-8");
-
     }
 }
