@@ -1,26 +1,26 @@
 package software.bytepushers.email.dto;
 
 public class MailRequest {
-    private String to;
-    private String subject;
-    private String body;
+    private String emailSender;
+    private String emailSubject;
+    private String emailBody;
 
     public String getTo(){
-        return to;
+        return emailSender;
     }
     public void setTo(String to){
-        this.to = to;
+        this.emailSender = to;
     }
     public String getSubject(){
-        return subject;
+        return emailSubject;
     }
     public void setSubject(String subject){
-        this.subject = subject;
+        this.emailSubject = subject;
     }
     public String getBody(){
-        return body;
+        return emailBody;
     }
     public void setBody(String body){
-        this.body = body;
+        this.emailBody = body;
     }
 }

@@ -1,82 +1,63 @@
 package software.bytepushers.email.controller;
 
-import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import software.bytepushers.email.dto.MailRequest;
-import software.bytepushers.email.service.SendMailService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+import software.bytepushers.email.service.EmailCampaignService;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-class MailControllerTest {
-
-    private MockMvc mockMvc;
+public class MailControllerTest {
 
     @Mock
-    private SendMailService sendMailService;
+    private EmailCampaignService emailCampaignService;
 
     @InjectMocks
     private MailController mailController;
 
+    private MultipartFile mockFile;
+
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(mailController).build();
+    public void setup() {
+        mockFile = new MockMultipartFile(
+                "file",
+                "test.xlsx",
+                MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                new byte[]{}
+        );
     }
 
     @Test
-    void testSendEmail_Success() throws Exception {
-        MailRequest mailRequest = new MailRequest();
-        mailRequest.setTo("bytepushers20@gmail.com");
-        mailRequest.setSubject("Test Subject");
-        mailRequest.setBody("Test Body");
+    public void testUploadExcel_Success() throws Exception {
+        // Arrange
+        doNothing().when(emailCampaignService).startCampaign(mockFile);
 
-        doNothing().when(sendMailService).sendEmail(mailRequest.getTo(), mailRequest.getSubject(), mailRequest.getBody());
+        // Act
+        String response = mailController.uploadExcel(mockFile);
 
-        mockMvc.perform(post("/email/sendEmail")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(mailRequest)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Email sent"));
-
-        verify(sendMailService, times(1)).sendEmail(mailRequest.getTo(), mailRequest.getSubject(), mailRequest.getBody());
+        // Assert
+        assertEquals("Email sent successfully", response);
+        verify(emailCampaignService, times(1)).startCampaign(mockFile);
     }
 
     @Test
-    void testSendEmail_Failure() throws Exception {
-        MailRequest mailRequest = new MailRequest();
-        mailRequest.setTo("bytepushers20@gmail.com");
-        mailRequest.setSubject("Test Subject");
-        mailRequest.setBody("Test Body");
+    public void testUploadExcel_Failure() throws Exception {
+        // Arrange
+        doThrow(new RuntimeException("File processing error")).when(emailCampaignService).startCampaign(mockFile);
 
-        doThrow(new MessagingException("SMTP error")).when(sendMailService).sendEmail(anyString(), anyString(), anyString());
+        // Act
+        String response = mailController.uploadExcel(mockFile);
 
-        mockMvc.perform(post("/email/sendEmail")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(mailRequest)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("email not sentSMTP error"));
-
-        verify(sendMailService, times(1)).sendEmail(anyString(), anyString(), anyString());
-    }
-
-    @Test
-    void testSendHtmlEmail() throws Exception {
-        doNothing().when(sendMailService).sendHtlmEmail();
-
-        mockMvc.perform(post("/email/htmlEmail")).andExpect(status().isOk());
-        verify(sendMailService, times(1)).sendHtlmEmail();
+        // Assert
+        assertEquals("Email sent failedFile processing error", response);
+        verify(emailCampaignService, times(1)).startCampaign(mockFile);
     }
 }
