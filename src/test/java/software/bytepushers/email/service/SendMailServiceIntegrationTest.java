@@ -39,7 +39,7 @@ public class SendMailServiceIntegrationTest {
 
         Session session = Session.getDefaultInstance(properties);
         Store store = session.getStore("imaps");
-        store.connect("imap.gmail.com", "bytepushers20@example.com", "Bytepushers123");
+        store.connect("imap.gmail.com", "bytepushers20@gmail.com", "sulc zjub aqqa quyf");
 
         Folder inbox = store.getFolder("INBOX");
         inbox.open(Folder.READ_WRITE);
