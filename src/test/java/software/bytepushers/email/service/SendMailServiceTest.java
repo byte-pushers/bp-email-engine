@@ -1,6 +1,7 @@
 package software.bytepushers.email.service;
 
-import jakarta.mail.MessagingException;
+import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -9,14 +10,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,10 +71,7 @@ public class SendMailServiceTest {
         String expectedTemplateContent = "Expected Email Template Content";
         when(mockResource.getInputStream()).thenReturn(IOUtils.toInputStream(expectedTemplateContent, StandardCharsets.UTF_8));
 
-        // Act
         String actualTemplateContent = sendMailService.emailTemplate("hello-world.html");
-
-        // Assert
         assertEquals(expectedTemplateContent, actualTemplateContent);
     }
 }

@@ -12,5 +12,4 @@ class BpEmailAppApplicationTests {
 	void contextLoads() {
 		assertDoesNotThrow(() -> BpEmailAppApplication.main(new String[]{}));
 	}
-
 }
